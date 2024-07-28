@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 
 # Obtenha o token da variável de ambiente
-hf_api_token = os.getenv('HUGGINGFACE_HUB_TOKEN')
+hf_api_token = os.getenv('HF_API_KEY')
 
 # Inicialize o cliente do Gradio com o token
 client = Client("Skyjoe/OpenCHAT-mini")
