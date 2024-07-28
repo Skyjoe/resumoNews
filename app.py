@@ -1,12 +1,15 @@
 from flask import Flask, jsonify, request
 import json
-import requests
-from transformers import pipeline
+from gradio_client import Client
+import os
 
 app = Flask(__name__)
 
-# Inicialize o pipeline de resumo
-summarizer = pipeline('summarization')
+# Acessar o token da variável de ambiente
+hf_api_token = os.getenv('HF_API_TOKEN')
+
+# Inicialize o cliente do Gradio
+client = Client("Skyjoe/OpenCHAT-mini", api_key=hf_api_token)
 
 @app.route('/api/news', methods=['GET'])
 def get_news():
@@ -22,8 +25,16 @@ def summarize_news():
         return jsonify({'error': 'No text provided'}), 400
 
     text = json_data['text']
-    summary = summarizer(text, max_length=150, min_length=50, do_sample=False)[0]['summary_text']
-    return jsonify({'summary': summary})
+    
+    # Usar o cliente do Gradio para gerar o resumo
+    result = client.predict(
+        message={"text": text, "files": []},
+        api_name="/chat"
+    )
+    
+    summarized_text = result['text']
+    
+    return jsonify({'summary': summarized_text})
 
 if __name__ == '__main__':
     app.run(debug=True)
