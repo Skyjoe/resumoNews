@@ -5,11 +5,8 @@ import os
 
 app = Flask(__name__)
 
-# Acessar o token da variável de ambiente
-hf_api_token = os.getenv('HF_API_TOKEN')
-
 # Inicialize o cliente do Gradio
-client = Client("Skyjoe/OpenCHAT-mini", api_key=hf_api_token)
+client = Client("Skyjoe/OpenCHAT-mini")
 
 @app.route('/api/news', methods=['GET'])
 def get_news():
@@ -32,9 +29,11 @@ def summarize_news():
         api_name="/chat"
     )
     
+    # Acessar o texto resumido
     summarized_text = result['text']
     
     return jsonify({'summary': summarized_text})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
